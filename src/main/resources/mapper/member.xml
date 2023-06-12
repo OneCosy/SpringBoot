@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bit.jsptest.model.mapper.MemberMapper">
+
+    <select id="idCheck" parameterType="string" resultType="int">
+        select count(userid)
+        from bit_member
+        where userid = #{userid}
+    </select>
+
+    <insert id="registerMember" parameterType="MemberDto">
+        INSERT INTO BIT_MEMBER (userName, userId, userPwd, email)
+        VALUES (#{userName}, #{userId}, #{userPwd}, #{email})
+    </insert>
+
+    <select id="login" parameterType="map" resultType="MemberDto">
+        select username, userid, email
+        from bit_member
+        where userid = #{userId} and userpwd = #{userPwd}
+    </select>
+
+    <select id="listMember" resultType="memberDto">
+        select userid, userpwd, username, email, date_format(joindate, '%y.%m.%d') joindate
+        from bit_member
+        order by joindate desc;
+    </select>
+
+    <select id="getMember" parameterType="String" resultType="memberdto">
+        select userid, userpwd, username, email, date_format(joindate, '%y.%m.%d') joindate
+        from bit_member
+        where userid = #{userid}
+    </select>
+
+    <update id="updateMember" parameterType="MemberDto">
+        update bit_member
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userPwd != null">userpwd = #{userPwd},</if>
+            <if test="email != null">email = #{email},</if>
+        </trim>
+        where userid = #{userId}
+    </update>
+
+    <delete id="deleteMember" parameterType="String">
+        delete from bit_member
+        where userid = #{userid}
+    </delete>
+
+</mapper>
