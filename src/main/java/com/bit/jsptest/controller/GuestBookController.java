@@ -161,32 +161,35 @@ public class GuestBookController {
         File target = new File(filePath);
         HttpHeaders header = new HttpHeaders();
         Resource rs = null;
+
         if(target.exists()) {
             try {
                 String mimeType = Files.probeContentType(Paths.get(target.getAbsolutePath()));
-                if(mimeType == null) {
+
+                if (mimeType == null) {
                     mimeType = "apllication/download; charset=UTF-8";
                 }
+
                 rs = new UrlResource(target.toURI());
                 String userAgent = request.getHeader("User-Agent");
                 boolean isIE = userAgent.indexOf("MSIE") > -1 || userAgent.indexOf("Trident") > -1;
                 String fileName = null;
                 String originalFile = (String) param.get("ofile");
+
                 // IE는 다르게 처리
                 if (isIE) {
                     fileName = URLEncoder.encode(originalFile, "UTF-8").replaceAll("\\+", "%20");
                 } else {
                     fileName = new String(originalFile.getBytes("UTF-8"), "ISO-8859-1");
                 }
+
                 header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+ fileName +"\"");
                 header.setCacheControl("no-cache");
                 header.setContentType(MediaType.parseMediaType(mimeType));
-            }catch(Exception e) {
+            } catch(Exception e) {
                 e.printStackTrace();
             }
         }
         return new ResponseEntity<Resource>(rs, header, HttpStatus.OK);
     }
-
-
 }
